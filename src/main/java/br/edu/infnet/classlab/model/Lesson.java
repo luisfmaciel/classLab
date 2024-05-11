@@ -1,5 +1,6 @@
 package br.edu.infnet.classlab.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.Date;
@@ -16,4 +17,8 @@ public class Lesson {
     private String videoId;
     private String lessonType;
     private Date availableAt;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "teacher_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "lessons"})
+    private Teacher teacher;
 }

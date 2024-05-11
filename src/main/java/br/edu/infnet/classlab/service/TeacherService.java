@@ -1,6 +1,8 @@
 package br.edu.infnet.classlab.service;
 
+import br.edu.infnet.classlab.model.Lesson;
 import br.edu.infnet.classlab.model.Teacher;
+import br.edu.infnet.classlab.repository.LessonRepository;
 import br.edu.infnet.classlab.repository.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,8 @@ public class TeacherService {
 
     @Autowired
     private TeacherRepository teacherRepository;
+    @Autowired
+    private LessonRepository lessonRepository;
 
     public List<Teacher> getAllTeachers() {
         return teacherRepository.findAll();

@@ -1,6 +1,7 @@
 package br.edu.infnet.classlab.controller;
 
 import br.edu.infnet.classlab.model.Lesson;
+import br.edu.infnet.classlab.model.Teacher;
 import br.edu.infnet.classlab.service.LessonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -8,7 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@RestController("/api/lesson")
+@RestController
+@RequestMapping("/api/lesson")
 public class LessonController {
 
     @Autowired
@@ -37,5 +39,10 @@ public class LessonController {
     @DeleteMapping("/{id}")
     public void deleteLessonById(@PathVariable Long id) {
         lessonService.deleteLessonById(id);
+    }
+
+    @PostMapping("/assign-teacher")
+    public Lesson assignTeacherToLesson(@RequestParam Long lessonId, @RequestParam Long teacherId) {
+        return lessonService.assignTeacherToLesson(lessonId, teacherId);
     }
 }

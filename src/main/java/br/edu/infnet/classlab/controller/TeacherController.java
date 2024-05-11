@@ -1,6 +1,8 @@
 package br.edu.infnet.classlab.controller;
 
+import br.edu.infnet.classlab.model.Lesson;
 import br.edu.infnet.classlab.model.Teacher;
+import br.edu.infnet.classlab.service.LessonService;
 import br.edu.infnet.classlab.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/teacher")
@@ -15,6 +18,8 @@ public class TeacherController {
 
     @Autowired
     private TeacherService teacherService;
+    @Autowired
+    private LessonService lessonService;
 
     @GetMapping
     public List<Teacher> getAllTeachers() {
@@ -29,9 +34,8 @@ public class TeacherController {
     }
 
     @PostMapping
-    public ResponseEntity<Teacher> createTeacher(@RequestBody Teacher teacher) {
-        Teacher savedTeacher = teacherService.saveTeacher(teacher);
-        return new ResponseEntity<>(savedTeacher, HttpStatus.CREATED);
+    public Teacher createTeacher(@RequestBody Teacher teacher) {
+        return teacherService.saveTeacher(teacher);
     }
 
     @PutMapping("/{id}")
