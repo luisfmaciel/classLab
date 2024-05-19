@@ -22,8 +22,13 @@ public class LessonService {
         return lessonRepository.findAll();
     }
 
-    public Lesson saveLesson(Lesson lesson) {
-        return lessonRepository.save(lesson);
+    public Lesson saveLesson(Lesson lesson, Long teacherId) {
+        Optional<Teacher> teacher = teacherRepository.findById(teacherId);
+        if (teacher.isPresent()) {
+            lesson.setTeacher(teacher.get());
+            return lessonRepository.save(lesson);
+        }
+        return null;
     }
 
     public Optional<Lesson> getLessonById(Long id) {
@@ -39,16 +44,6 @@ public class LessonService {
         if (lessonOptional.isPresent()) {
             updatedLesson.setId(id);
             return lessonRepository.save(updatedLesson);
-        }
-        return null;
-    }
-
-    public Lesson assignTeacherToLesson(Long lessonId, Long teacherId) {
-        Optional<Lesson> lesson = lessonRepository.findById(lessonId);
-        Optional<Teacher> teacher = teacherRepository.findById(teacherId);
-        if (lesson.isPresent() && teacher.isPresent()) {
-            lesson.get().setTeacher(teacher.get());
-            return lessonRepository.save(lesson.get());
         }
         return null;
     }

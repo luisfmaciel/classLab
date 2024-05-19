@@ -34,11 +34,15 @@ public class LessonController {
     @Operation(summary = "Cria uma nova aula", description = "Este endpoint cria uma nova aula com base nos dados fornecidos.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Aula criada com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos para a criação da aula")
+            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos para a criação da aula"),
+            @ApiResponse(responseCode = "404", description = "Professor não encontrado")
     })
-    public ResponseEntity<Lesson> createLesson(@RequestBody Lesson lesson) {
-        Lesson newLesson = lessonService.saveLesson(lesson);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newLesson);
+    public ResponseEntity<Lesson> createLesson(@RequestBody Lesson lesson, @RequestParam Long teacherId) {
+        Lesson newLesson = lessonService.saveLesson(lesson, teacherId);
+        if (newLesson != null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(newLesson);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/{id}")
@@ -62,7 +66,7 @@ public class LessonController {
     })
     public ResponseEntity<Lesson> updateLesson(@PathVariable Long id, @RequestBody Lesson updatedLesson) {
         Lesson lesson = lessonService.updateLesson(id, updatedLesson);
-        return ResponseEntity.ok(lesson);
+        return lesson != null ? ResponseEntity.ok(lesson) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
@@ -74,17 +78,5 @@ public class LessonController {
     public ResponseEntity<Lesson> deleteLessonById(@PathVariable Long id) {
         lessonService.deleteLessonById(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/assign-teacher")
-    @Operation(summary = "Associa um professor a uma aula", description = "Este endpoint associa um professor específico a uma aula específica com base nos IDs fornecidos.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Professor associado à aula com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Aula ou professor não encontrados"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos para a associação")
-    })
-    public ResponseEntity<Lesson> assignTeacherToLesson(@RequestParam Long lessonId, @RequestParam Long teacherId) {
-        Lesson assignedLesson = lessonService.assignTeacherToLesson(lessonId, teacherId);
-        return ResponseEntity.ok(assignedLesson);
     }
 }
