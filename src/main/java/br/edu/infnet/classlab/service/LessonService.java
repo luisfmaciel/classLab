@@ -43,6 +43,7 @@ public class LessonService {
         Optional<Lesson> lessonOptional = lessonRepository.findById(id);
         if (lessonOptional.isPresent()) {
             updatedLesson.setId(id);
+            updatedLesson.setTeacher(lessonOptional.get().getTeacher());
             return lessonRepository.save(updatedLesson);
         }
         return null;
