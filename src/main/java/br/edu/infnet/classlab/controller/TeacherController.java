@@ -1,5 +1,9 @@
 package br.edu.infnet.classlab.controller;
 
+import br.edu.infnet.classlab.exception.InvalidLessonDataException;
+import br.edu.infnet.classlab.exception.InvalidTeacherDataException;
+import br.edu.infnet.classlab.exception.LessonNotFoundException;
+import br.edu.infnet.classlab.exception.TeacherNotFoundException;
 import br.edu.infnet.classlab.model.Teacher;
 import br.edu.infnet.classlab.service.TeacherService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,7 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/teacher")
@@ -27,7 +33,10 @@ public class TeacherController {
     })
     public ResponseEntity<List<Teacher>> getAllTeachers() {
         List<Teacher> teachers = teacherService.getAllTeachers();
-        return teachers.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(teachers);
+        if (teachers.isEmpty()) {
+            throw new TeacherNotFoundException("Nenhuma professor encontrada");
+        }
+        return ResponseEntity.ok(teachers);
     }
 
     @GetMapping("/{id}")
@@ -39,14 +48,15 @@ public class TeacherController {
     public ResponseEntity<Teacher> getTeacherById(@PathVariable Long id) {
         return teacherService.getTeacherById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new TeacherNotFoundException("Nenhuma professor encontrado para o ID: " + id));
     }
 
     @PostMapping
     @Operation(summary = "Cria um novo professor", description = "Este endpoint cria um novo professor com base nos dados fornecidos.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Professor criado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos para a criação do professor")
+            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos para a criação do professor"),
+            @ApiResponse(responseCode = "404", description = "Professor não encontrado")
     })
     public ResponseEntity<Teacher> createTeacher(@RequestBody Teacher teacher) {
         Teacher newTeacher = teacherService.saveTeacher(teacher);
@@ -61,8 +71,15 @@ public class TeacherController {
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos para a atualização")
     })
     public ResponseEntity<Teacher> updateTeacher(@PathVariable Long id, @RequestBody Teacher teacher) {
-        Teacher updatedTeacher = teacherService.updateTeacherById(id, teacher);
-        return ResponseEntity.ok(updatedTeacher);
+        try {
+            Teacher updatedTeacher = teacherService.updateTeacherById(id, teacher);
+            if (updatedTeacher == null) {
+                throw new LessonNotFoundException("Aula não encontrada para o ID: " + id);
+            }
+            return ResponseEntity.ok(updatedTeacher);
+        } catch (InvalidLessonDataException ex) {
+            throw new InvalidTeacherDataException("Dados inválidos fornecidos para a atualização");
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -71,8 +88,14 @@ public class TeacherController {
             @ApiResponse(responseCode = "204", description = "Professor excluído com sucesso"),
             @ApiResponse(responseCode = "404", description = "Professor não encontrado")
     })
-    public ResponseEntity<Teacher> deleteTeacherById(@PathVariable Long id) {
-        teacherService.deleteTeacherById(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Map<String, String>> deleteTeacherById(@PathVariable Long id) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            teacherService.deleteTeacherById(id);
+            response.put("message", "Professor excluída com sucesso");
+            return ResponseEntity.ok(response);
+        } catch (LessonNotFoundException ex) {
+            throw new LessonNotFoundException("Professor não encontrada para o ID: " + id);
+        }
     }
 }

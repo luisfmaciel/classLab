@@ -1,5 +1,7 @@
 package br.edu.infnet.classlab.controller;
 
+import br.edu.infnet.classlab.exception.InvalidLessonDataException;
+import br.edu.infnet.classlab.exception.LessonNotFoundException;
 import br.edu.infnet.classlab.model.Lesson;
 import br.edu.infnet.classlab.service.LessonService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,7 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/lesson")
@@ -27,7 +31,10 @@ public class LessonController {
     })
     public ResponseEntity<List<Lesson>> getAllLessons() {
         List<Lesson> lessons = lessonService.getAllLessons();
-        return lessons.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(lessons);
+        if (lessons.isEmpty()) {
+            throw new LessonNotFoundException("Nenhuma aula encontrada");
+        }
+        return ResponseEntity.ok(lessons);
     }
 
     @PostMapping
@@ -39,10 +46,7 @@ public class LessonController {
     })
     public ResponseEntity<Lesson> createLesson(@RequestBody Lesson lesson, @RequestParam Long teacherId) {
         Lesson newLesson = lessonService.saveLesson(lesson, teacherId);
-        if (newLesson != null) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(newLesson);
-        }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(newLesson);
     }
 
     @GetMapping("/{id}")
@@ -54,7 +58,7 @@ public class LessonController {
     public ResponseEntity<Lesson> getLessonById(@PathVariable Long id) {
         return lessonService.getLessonById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new LessonNotFoundException("Aula não encontrada para o ID: " + id));
     }
 
     @PutMapping("/{id}")
@@ -65,8 +69,15 @@ public class LessonController {
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos para a atualização")
     })
     public ResponseEntity<Lesson> updateLesson(@PathVariable Long id, @RequestBody Lesson updatedLesson) {
-        Lesson lesson = lessonService.updateLesson(id, updatedLesson);
-        return lesson != null ? ResponseEntity.ok(lesson) : ResponseEntity.notFound().build();
+        try {
+            Lesson lesson = lessonService.updateLesson(id, updatedLesson);
+            if (lesson == null) {
+                throw new LessonNotFoundException("Aula não encontrada para o ID: " + id);
+            }
+            return ResponseEntity.ok(lesson);
+        } catch (InvalidLessonDataException ex) {
+            throw new InvalidLessonDataException("Dados inválidos fornecidos para a atualização");
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -75,8 +86,14 @@ public class LessonController {
             @ApiResponse(responseCode = "204", description = "Aula excluída com sucesso"),
             @ApiResponse(responseCode = "404", description = "Aula não encontrada")
     })
-    public ResponseEntity<Lesson> deleteLessonById(@PathVariable Long id) {
-        lessonService.deleteLessonById(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Map<String, String>> deleteLessonById(@PathVariable Long id) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            lessonService.deleteLessonById(id);
+            response.put("message", "Aula excluída com sucesso");
+            return ResponseEntity.ok(response);
+        } catch (LessonNotFoundException ex) {
+            throw new LessonNotFoundException("Aula não encontrada para o ID: " + id);
+        }
     }
 }

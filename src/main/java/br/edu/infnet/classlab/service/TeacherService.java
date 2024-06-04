@@ -1,8 +1,8 @@
 package br.edu.infnet.classlab.service;
 
-import br.edu.infnet.classlab.model.Lesson;
+import br.edu.infnet.classlab.exception.InvalidTeacherDataException;
+import br.edu.infnet.classlab.exception.TeacherNotFoundException;
 import br.edu.infnet.classlab.model.Teacher;
-import br.edu.infnet.classlab.repository.LessonRepository;
 import br.edu.infnet.classlab.repository.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,8 +15,6 @@ public class TeacherService {
 
     @Autowired
     private TeacherRepository teacherRepository;
-    @Autowired
-    private LessonRepository lessonRepository;
 
     public List<Teacher> getAllTeachers() {
         return teacherRepository.findAll();
@@ -27,20 +25,27 @@ public class TeacherService {
     }
 
     public Teacher saveTeacher(Teacher teacher) {
-        teacherRepository.save(teacher);
-        return teacher;
+        if (teacher == null) {
+            throw new InvalidTeacherDataException("Dados inválidos fornecidos para a criação do professor");
+        }
+        return teacherRepository.save(teacher);
     }
 
-    public  Teacher updateTeacherById(Long id, Teacher teacher) {
-        Optional<Teacher> teacherOptional = teacherRepository.findById(id);
-        if (teacherOptional.isPresent()) {
-            teacher.setId(id);
-            return teacherRepository.save(teacher);
+    public Teacher updateTeacherById(Long id, Teacher teacher) {
+        if (teacher == null) {
+            throw new InvalidTeacherDataException("Dados inválidos fornecidos para a atualização do professor");
         }
-        return null;
+        return teacherRepository.findById(id)
+                .map(existingTeacher -> {
+                    teacher.setId(existingTeacher.getId());
+                    return teacherRepository.save(teacher);
+                })
+                .orElseThrow(() -> new TeacherNotFoundException("Professor não encontrado para o ID: " + id));
     }
 
     public void deleteTeacherById(Long id) {
-        teacherRepository.deleteById(id);
+        Teacher teacher = teacherRepository.findById(id)
+                .orElseThrow(() -> new TeacherNotFoundException("Professor não encontrado para o ID: " + id));
+        teacherRepository.delete(teacher);
     }
 }
