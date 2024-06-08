@@ -66,6 +66,20 @@ public class LessonController {
                 .orElseThrow(() -> new LessonNotFoundException("Aula não encontrada para o ID: " + id));
     }
 
+    @GetMapping("/title/{title}")
+    @Operation(summary = "Retorna todas as aulas pelo título", description = "Este endpoint retorna todas aulas com base no título fornecido.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Aulas retornadas com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Nenhuma aula encontrada")
+    })
+    public ResponseEntity<List<Lesson>> getLessonByTitle(@PathVariable String title) {
+        List<Lesson> lessons = lessonService.getLessonsByTitle(title);
+        if (lessons.isEmpty()) {
+            throw new LessonNotFoundException("Nenhuma aula encontrada para o title: " + title);
+        }
+        return ResponseEntity.ok(lessons);
+    }
+
     @GetMapping("/teacherLessons/{id}")
     @Operation(summary = "Retorna todas as aulas de um professor", description = "Este endpoint retorna uma lista de todas as aulas associadas a um professor específico com base no ID do professor fornecido.")
     @ApiResponses(value = {

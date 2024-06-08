@@ -48,6 +48,11 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
+    public List<Lesson> getLessonsByTitle(String title) {
+        return lessonRepository.findByTitleContainingIgnoreCase(title);
+    }
+
+    @Override
     public void deleteLessonById(Long id) {
         Lesson lesson = lessonRepository.findById(id)
                 .orElseThrow(() -> new LessonNotFoundException("Aula não encontrada para o ID: " + id));

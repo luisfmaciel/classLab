@@ -36,7 +36,7 @@ public class TeacherController {
     public ResponseEntity<List<Teacher>> getAllTeachers() {
         List<Teacher> teachers = teacherService.getAllTeachers();
         if (teachers.isEmpty()) {
-            throw new TeacherNotFoundException("Nenhuma professor encontrada");
+            throw new TeacherNotFoundException("Nenhum professor encontrada");
         }
         return ResponseEntity.ok(teachers);
     }
@@ -50,7 +50,22 @@ public class TeacherController {
     public ResponseEntity<Teacher> getTeacherById(@PathVariable Long id) {
         return teacherService.getTeacherById(id)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new TeacherNotFoundException("Nenhuma professor encontrado para o ID: " + id));
+                .orElseThrow(() -> new TeacherNotFoundException("Nenhum professor encontrado para o ID: " + id));
+    }
+
+    @GetMapping("/name/{name}")
+    @Operation(summary = "Busca os professor pelo nome", description = "Este endpoint retorna todos professores com base no nome fornecido.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Professores retornados com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Professores não encontrado")
+    })
+    public ResponseEntity<List<Teacher>> getTeachersByName(@PathVariable String name) {
+        List<Teacher> teachers = teacherService.getTeachersByName(name);
+        if(teachers.isEmpty()) {
+            throw new TeacherNotFoundException("Nenhum professor encontrado com o nome " + name);
+        }
+
+        return ResponseEntity.ok(teachers);
     }
 
     @PostMapping

@@ -28,6 +28,11 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public List<Teacher> getTeachersByName(String name) {
+        return teacherRepository.findByNameContainingIgnoreCase(name);
+    }
+
+    @Override
     public boolean  existsTeacherById(Long id) {
         return teacherRepository.existsById(id);
     }
