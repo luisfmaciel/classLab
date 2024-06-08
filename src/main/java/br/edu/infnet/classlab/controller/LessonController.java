@@ -4,9 +4,11 @@ import br.edu.infnet.classlab.exception.InvalidLessonDataException;
 import br.edu.infnet.classlab.exception.LessonNotFoundException;
 import br.edu.infnet.classlab.model.Lesson;
 import br.edu.infnet.classlab.service.LessonService;
+import br.edu.infnet.classlab.service.impl.LessonServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +19,11 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/lesson")
 public class LessonController {
 
-    @Autowired
-    private LessonService lessonService;
+    private final LessonServiceImpl lessonService;
 
     @GetMapping
     @Operation(summary = "Retorna todas as aulas", description = "Este endpoint retorna uma lista de todas as aulas disponíveis. Se não houver nenhuma aula, retornará 404 Not Found.")

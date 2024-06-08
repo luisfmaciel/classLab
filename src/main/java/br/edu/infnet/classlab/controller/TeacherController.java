@@ -6,9 +6,11 @@ import br.edu.infnet.classlab.exception.LessonNotFoundException;
 import br.edu.infnet.classlab.exception.TeacherNotFoundException;
 import br.edu.infnet.classlab.model.Teacher;
 import br.edu.infnet.classlab.service.TeacherService;
+import br.edu.infnet.classlab.service.impl.TeacherServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +21,11 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/teacher")
 public class TeacherController {
 
-    @Autowired
-    private TeacherService teacherService;
+    private final TeacherServiceImpl teacherService;
 
     @GetMapping
     @Operation(summary = "Retorna todos os professores", description = "Este endpoint retorna uma lista de todos os professores disponíveis. Se não houver nenhum professor, retornará 404 Not Found.")
