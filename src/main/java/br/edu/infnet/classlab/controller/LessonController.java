@@ -2,9 +2,11 @@ package br.edu.infnet.classlab.controller;
 
 import br.edu.infnet.classlab.exception.InvalidLessonDataException;
 import br.edu.infnet.classlab.exception.LessonNotFoundException;
+import br.edu.infnet.classlab.exception.TeacherNotFoundException;
 import br.edu.infnet.classlab.model.Lesson;
 import br.edu.infnet.classlab.service.LessonService;
 import br.edu.infnet.classlab.service.impl.LessonServiceImpl;
+import br.edu.infnet.classlab.service.impl.TeacherServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -24,6 +26,7 @@ import java.util.Map;
 public class LessonController {
 
     private final LessonServiceImpl lessonService;
+    private final TeacherServiceImpl teacherService;
 
     @GetMapping
     @Operation(summary = "Retorna todas as aulas", description = "Este endpoint retorna uma lista de todas as aulas disponíveis. Se não houver nenhuma aula, retornará 404 Not Found.")
@@ -61,6 +64,25 @@ public class LessonController {
         return lessonService.getLessonById(id)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new LessonNotFoundException("Aula não encontrada para o ID: " + id));
+    }
+
+    @GetMapping("/teacherLessons/{id}")
+    @Operation(summary = "Retorna todas as aulas de um professor", description = "Este endpoint retorna uma lista de todas as aulas associadas a um professor específico com base no ID do professor fornecido.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Aulas retornadas com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Nenhum professor encontrado ou nenhuma aula associada a ele encontrada")
+    })
+    public ResponseEntity<List<Lesson>> getAllLessonsByTeacher(@PathVariable  Long id) {
+        if (!teacherService.existsTeacherById(id)) {
+            throw new TeacherNotFoundException("Professor não encontrada para o ID: " + id);
+        }
+
+        List<Lesson> lessons = lessonService.getLessonsByTeacherId(id);
+        if (lessons.isEmpty()) {
+            throw new LessonNotFoundException("Nenhuma aula encontrada para o professor com ID: " + id);
+        }
+
+        return ResponseEntity.ok(lessons);
     }
 
     @PutMapping("/{id}")

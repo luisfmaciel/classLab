@@ -43,6 +43,11 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
+    public List<Lesson> getLessonsByTeacherId(Long teacherId) {
+        return lessonRepository.getLessonsByTeacherId(teacherId);
+    }
+
+    @Override
     public void deleteLessonById(Long id) {
         Lesson lesson = lessonRepository.findById(id)
                 .orElseThrow(() -> new LessonNotFoundException("Aula não encontrada para o ID: " + id));

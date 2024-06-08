@@ -28,6 +28,11 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public boolean  existsTeacherById(Long id) {
+        return teacherRepository.existsById(id);
+    }
+
+    @Override
     public Teacher saveTeacher(Teacher teacher) {
         if (teacher == null) {
             throw new InvalidTeacherDataException("Dados inválidos fornecidos para a criação do professor");

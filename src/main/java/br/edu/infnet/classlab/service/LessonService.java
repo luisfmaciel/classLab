@@ -9,6 +9,7 @@ public interface LessonService {
     List<Lesson> getAllLessons();
     Lesson saveLesson(Lesson lesson, Long teacherId);
     Optional<Lesson> getLessonById(Long id);
+    List<Lesson> getLessonsByTeacherId(Long teacherId);
     void deleteLessonById(Long id) ;
     Lesson updateLesson(Long id, Lesson updatedLesson);
 }
