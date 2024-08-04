@@ -1,5 +1,7 @@
 package br.edu.infnet.classlab.service;
 
+import br.edu.infnet.classlab.model.Classification;
+import br.edu.infnet.classlab.model.Feedback;
 import br.edu.infnet.classlab.model.Lesson;
 import br.edu.infnet.classlab.model.Teacher;
 import br.edu.infnet.classlab.service.impl.LessonServiceImpl;
@@ -8,8 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import static org.mockito.Mockito.when;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -21,11 +25,16 @@ public class LessonServiceTest {
 
     @Autowired
     LessonServiceImpl lessonService;
+    @Mock
+    LessonServiceImpl lessonServiceMock;
     @Autowired
     TeacherServiceImpl teacherService;
 
     private Lesson lesson;
     private Teacher teacher;
+    private Feedback feedback1;
+    private Feedback feedback2;
+    private Long lessonId;
 
     @BeforeEach
     public void setUp() {
@@ -44,6 +53,22 @@ public class LessonServiceTest {
         lesson.setLessonType("Video");
         lesson.setAvailableAt(new Date());
         lesson.setTeacher(teacher);
+
+        feedback1 = Feedback.builder()
+                .id("1L")
+                .lessonId(1L)
+                .comment("Great lesson!")
+                .classification(Classification.GOOD)
+                .build();
+
+        feedback2 = Feedback.builder()
+                .id("2L")
+                .lessonId(1L)
+                .comment("Needs improvement.")
+                .classification(Classification.AVERAGE)
+                .build();
+
+        lessonId = 1L;
     }
 
     @Test
@@ -101,5 +126,13 @@ public class LessonServiceTest {
         allLessons = lessonService.getAllLessons();
         int finalSize = allLessons.size();
         assertEquals(initialSize - 1, finalSize);
+    }
+
+    @Test
+    @DisplayName("Deve retornar todos os feedbacks para um ID de aula válido.")
+    public void testGetAllFeedbacksByLessonId() {
+        when(lessonServiceMock.getAllFeedbacksByLessonId(lessonId)).thenReturn(Arrays.asList(feedback1, feedback2));
+        List<Feedback> response = lessonServiceMock.getAllFeedbacksByLessonId(lessonId);
+        assertEquals(2, response.size());
     }
 }
