@@ -136,21 +136,4 @@ public class LessonController {
             throw new LessonNotFoundException("Aula não encontrada para o ID: " + id);
         }
     }
-
-    @GetMapping("/feedbacks/{lessonId}")
-    @Operation(summary = "Recupera todos os feedbacks de uma aula específica",
-            description = "Este endpoint recupera todos os feedbacks associados a um determinado ID de aula.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Feedbacks recuperados com sucesso"),
-            @ApiResponse(responseCode = "400", description = "ID da aula inválido fornecido"),
-            @ApiResponse(responseCode = "404", description = "Nenhum feedback encontrado para o ID de aula fornecido")
-    })
-    public ResponseEntity<List<Feedback>> getAllFeedbacksByLessonId(@PathVariable Long lessonId) {
-        log.info("Get all feedbacks by lessonId: {}", lessonId);
-        List<Feedback> payload = lessonService.getAllFeedbacksByLessonId(lessonId);
-        if (payload == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok(payload);
-    }
 }

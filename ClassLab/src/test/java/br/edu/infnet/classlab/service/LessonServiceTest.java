@@ -25,16 +25,11 @@ public class LessonServiceTest {
 
     @Autowired
     LessonServiceImpl lessonService;
-    @Mock
-    LessonServiceImpl lessonServiceMock;
     @Autowired
     TeacherServiceImpl teacherService;
 
     private Lesson lesson;
     private Teacher teacher;
-    private Feedback feedback1;
-    private Feedback feedback2;
-    private Long lessonId;
 
     @BeforeEach
     public void setUp() {
@@ -53,22 +48,6 @@ public class LessonServiceTest {
         lesson.setLessonType("Video");
         lesson.setAvailableAt(new Date());
         lesson.setTeacher(teacher);
-
-        feedback1 = Feedback.builder()
-                .id("1L")
-                .lessonId(1L)
-                .comment("Great lesson!")
-                .classification(Classification.GOOD)
-                .build();
-
-        feedback2 = Feedback.builder()
-                .id("2L")
-                .lessonId(1L)
-                .comment("Needs improvement.")
-                .classification(Classification.AVERAGE)
-                .build();
-
-        lessonId = 1L;
     }
 
     @Test
@@ -128,11 +107,5 @@ public class LessonServiceTest {
         assertEquals(initialSize - 1, finalSize);
     }
 
-    @Test
-    @DisplayName("Deve retornar todos os feedbacks para um ID de aula válido.")
-    public void testGetAllFeedbacksByLessonId() {
-        when(lessonServiceMock.getAllFeedbacksByLessonId(lessonId)).thenReturn(Arrays.asList(feedback1, feedback2));
-        List<Feedback> response = lessonServiceMock.getAllFeedbacksByLessonId(lessonId);
-        assertEquals(2, response.size());
-    }
+
 }

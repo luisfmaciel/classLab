@@ -7,7 +7,9 @@ import br.edu.infnet.classlab.model.Feedback;
 import br.edu.infnet.classlab.model.Lesson;
 import br.edu.infnet.classlab.repository.LessonRepository;
 import br.edu.infnet.classlab.repository.TeacherRepository;
+import br.edu.infnet.classlab.service.FeedbackResponse;
 import br.edu.infnet.classlab.service.LessonService;
+import br.edu.infnet.classlab.service.feign.LessonClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -21,6 +23,7 @@ public class LessonServiceImpl implements LessonService {
 
     private final LessonRepository lessonRepository;
     private final TeacherRepository teacherRepository;
+    private final LessonClient lessonClient;
 
     @Override
     public List<Lesson> getAllLessons() {
@@ -68,16 +71,6 @@ public class LessonServiceImpl implements LessonService {
             updatedLesson.setId(id);
             updatedLesson.setTeacher(lessonOptional.get().getTeacher());
             return lessonRepository.save(updatedLesson);
-        }
-        return null;
-    }
-
-    public List<Feedback> getAllFeedbacksByLessonId(Long lessonId) {
-        RestClient restClient = RestClient.create();
-        var serverUrl = String.format("http://localhost:8082/api/feedback/lessons/%d", lessonId);
-        var responseEntity = restClient.get().uri(serverUrl).retrieve().toEntity(Feedback[].class).getBody();
-        if (responseEntity != null) {
-            return List.of(responseEntity);
         }
         return null;
     }

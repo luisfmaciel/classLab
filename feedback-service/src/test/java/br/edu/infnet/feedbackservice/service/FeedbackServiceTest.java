@@ -11,9 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -47,11 +44,12 @@ public class FeedbackServiceTest {
     @Test
     @DisplayName("Deve retornar todos os feedbacks para um ID de aula válido.")
     public void testGetAllFeedbacksByLessonId() {
-        when(feedbackRepository.findAllByLessonId(1L)).thenReturn(Arrays.asList(feedback1, feedback2));
-        List<Feedback> feedbacks = feedbackService.getAllFeedbacksByLessonId(1L);
-        assertEquals(2, feedbacks.size());
-        assertEquals(feedback1.getComment(), feedbacks.get(0).getComment());
-        assertEquals(feedback2.getComment(), feedbacks.get(1).getComment());
+        Feedback[] allFeedbacks = {feedback1, feedback2};
+        when(feedbackRepository.findAllByLessonId(1L)).thenReturn(allFeedbacks);
+        Feedback[] feedbacks = feedbackService.getAllFeedbacksByLessonId(1L);
+        assertEquals(2, feedbacks.length);
+        assertEquals(feedback1.getComment(), feedbacks[0].getComment());
+        assertEquals(feedback2.getComment(), feedbacks[1].getComment());
     }
 
     @Test

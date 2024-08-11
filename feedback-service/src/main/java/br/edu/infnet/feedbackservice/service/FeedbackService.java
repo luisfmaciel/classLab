@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface FeedbackService {
     Feedback saveFeedback(Feedback feedback);
-    List<Feedback> getAllFeedbacksByLessonId(Long lessonId);
+    Feedback[] getAllFeedbacksByLessonId(Long lessonId);
 }
