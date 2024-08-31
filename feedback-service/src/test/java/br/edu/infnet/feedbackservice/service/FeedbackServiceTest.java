@@ -28,14 +28,14 @@ public class FeedbackServiceTest {
     public void setUp() {
         feedback1 = Feedback.builder()
                 .id("1L")
-                .lessonId(1L)
+                .lessonId("1L")
                 .comment("Great lesson!")
                 .classification(Classification.GOOD)
                 .build();
 
         feedback2 = Feedback.builder()
                 .id("2L")
-                .lessonId(1L)
+                .lessonId("1L")
                 .comment("Needs improvement.")
                 .classification(Classification.AVERAGE)
                 .build();
@@ -45,8 +45,8 @@ public class FeedbackServiceTest {
     @DisplayName("Deve retornar todos os feedbacks para um ID de aula válido.")
     public void testGetAllFeedbacksByLessonId() {
         Feedback[] allFeedbacks = {feedback1, feedback2};
-        when(feedbackRepository.findAllByLessonId(1L)).thenReturn(allFeedbacks);
-        Feedback[] feedbacks = feedbackService.getAllFeedbacksByLessonId(1L);
+        when(feedbackRepository.findAllByLessonId("1L")).thenReturn(allFeedbacks);
+        Feedback[] feedbacks = feedbackService.getAllFeedbacksByLessonId("1L");
         assertEquals(2, feedbacks.length);
         assertEquals(feedback1.getComment(), feedbacks[0].getComment());
         assertEquals(feedback2.getComment(), feedbacks[1].getComment());

@@ -12,7 +12,7 @@ import org.springframework.web.client.RestClient;
 public class LessonServiceImpl implements LessonService {
     private final LessonClient lessonClient;
     @Override
-    public Lesson getLessonById(Long lessonId) {
+    public Lesson getLessonById(String lessonId) {
         return lessonClient.getLessonById(lessonId);
     }
 }

@@ -14,7 +14,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     private final FeedbackRepository feedbackRepository;
 
     @Override
-    public Feedback[] getAllFeedbacksByLessonId(Long lessonId) {
+    public Feedback[] getAllFeedbacksByLessonId(String lessonId) {
         return feedbackRepository.findAllByLessonId(lessonId);
     }
 

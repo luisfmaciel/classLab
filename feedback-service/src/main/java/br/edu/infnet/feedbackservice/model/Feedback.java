@@ -15,13 +15,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "feedbacks")
 public class Feedback {
     @Id
-    @JsonProperty("id")
     private String id;
-    @JsonProperty("lessonId")
-    private Long lessonId;
-    @JsonProperty("comment")
+    private String lessonId;
     private String comment;
-    @JsonProperty("classification")
     private Classification classification;
 
     public static boolean isValidClassification(String value) {

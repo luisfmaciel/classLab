@@ -20,6 +20,4 @@ public class Teacher {
     private String name;
     private String avatarUrl;
     private String bio;
-    @JsonIgnore
-    private List<Lesson> lessons = new ArrayList<>();
 }

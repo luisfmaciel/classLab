@@ -5,8 +5,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient("CLASSLAB")
+@FeignClient("LESSON-SERVICE")
 public interface LessonClient {
-    @GetMapping("/api/lesson/{lessonId}")
-    Lesson getLessonById(@PathVariable Long lessonId);
+    @GetMapping("/{lessonId}")
+    Lesson getLessonById(@PathVariable String lessonId);
 }

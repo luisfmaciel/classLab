@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      routes:
+        - id: lesson
+          uri: lb://LESSON-SERVICE
+          filters:
+            - StripPrefix=1
+          predicates:
+            - Path=/lesson/**
+        - id: teacher
+          uri: lb://TEACHER-SERVICE
+          filters:
+            - StripPrefix=1
+          predicates:
+            - Path=/teacher/**
+        - id: feedback
+          uri: lb://FEEDBACK-SERVICE
+          filters:
+            - StripPrefix=1
+          predicates:
+            - Path=/feedback/**
+server:
+  port: 9999
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.value}
+  client:
+    service-url:
+      default-url: http://localhost:8761/eureka/

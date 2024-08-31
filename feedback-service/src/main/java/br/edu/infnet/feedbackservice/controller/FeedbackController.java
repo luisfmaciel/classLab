@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/feedback")
+@RequestMapping("/")
 @Slf4j
 @RequiredArgsConstructor
 public class FeedbackController {
@@ -50,14 +50,14 @@ public class FeedbackController {
         return ResponseEntity.status(HttpStatus.CREATED).body(feedbackSaved);
     }
 
-    @GetMapping("/lessons/{lessonId}")
+    @GetMapping("/lesson/{lessonId}")
     @Operation(summary = "Recupera todos os feedbacks de uma aula específica",
             description = "Este endpoint recupera todos os feedbacks associados a um ID de aula específico.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Feedbacks recuperados com sucesso"),
             @ApiResponse(responseCode = "404", description = "Nenhum feedback encontrado para o ID de aula fornecido")
     })
-    public ResponseEntity<FeedbackResponse> getAllFeedbacksByLessonId(@PathVariable Long lessonId) {
+    public ResponseEntity<FeedbackResponse> getAllFeedbacksByLessonId(@PathVariable String lessonId) {
         log.info("Get Feedback by Lesson ID: {}", lessonId);
         Feedback[] feedbacks = feedbackService.getAllFeedbacksByLessonId(lessonId);
         FeedbackResponse feedbackResponse = new FeedbackResponse(Arrays.asList(feedbacks));

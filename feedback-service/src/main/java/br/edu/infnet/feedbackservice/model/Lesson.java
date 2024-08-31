@@ -15,12 +15,10 @@ import java.util.Date;
 @Builder
 public class Lesson {
     @Id
-    private Long id;
+    private String id;
     private String title;
     private String description;
     private String videoId;
     private String lessonType;
-    private Date availableAt;
-    @JsonIgnore
-    private Teacher teacher;
+    private String teacherId;
 }
