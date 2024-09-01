@@ -1,5 +1,6 @@
 package br.edu.infnet.lessonservice.service;
 
+import br.edu.infnet.lessonservice.model.Feedback;
 import br.edu.infnet.lessonservice.model.Lesson;
 
 import java.util.List;
@@ -13,4 +14,5 @@ public interface LessonService {
     List<Lesson> getLessonsByTitle(String title);
     void deleteLessonById(String id) ;
     Lesson updateLesson(String id, Lesson updatedLesson);
+    void processAverageRatingLesson(Feedback feedback);
 }

@@ -1,19 +1,18 @@
 package br.edu.infnet.lessonservice.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @Builder
 public class Feedback {
     @Id
     private String id;
-    private Long lessonId;
+    private String lessonId;
     private String comment;
     private Classification classification;
+    private int totalFeedbacks;
 }

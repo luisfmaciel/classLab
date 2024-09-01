@@ -3,10 +3,13 @@ package br.edu.infnet.lessonservice.service.impl;
 import br.edu.infnet.lessonservice.exception.InvalidLessonDataException;
 import br.edu.infnet.lessonservice.exception.LessonNotFoundException;
 import br.edu.infnet.lessonservice.exception.TeacherNotFoundException;
+import br.edu.infnet.lessonservice.model.Classification;
+import br.edu.infnet.lessonservice.model.Feedback;
 import br.edu.infnet.lessonservice.model.Lesson;
 import br.edu.infnet.lessonservice.repository.LessonRepository;
 import br.edu.infnet.lessonservice.service.LessonService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +17,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LessonServiceImpl implements LessonService {
 
     private final LessonRepository lessonRepository;
@@ -51,6 +55,22 @@ public class LessonServiceImpl implements LessonService {
         Lesson lesson = lessonRepository.findById(id)
                 .orElseThrow(() -> new LessonNotFoundException("Aula não encontrada para o ID: " + id));
         lessonRepository.delete(lesson);
+    }
+
+    @Override
+    public void processAverageRatingLesson(Feedback feedback) {
+        Optional<Lesson> lesson = lessonRepository.findById(feedback.getLessonId());
+        if (lesson.isPresent()) {
+            log.info("lesson : {}", lesson.get());
+            int totalSumRating = lesson.get().getTotalSumRating();
+            lesson.get().setTotalSumRating(totalSumRating + Classification.getValue(feedback.getClassification()));
+            Classification averageClassification = Classification.calculateAverageClassification(totalSumRating, feedback.getTotalFeedbacks(), feedback.getClassification());
+            log.info("averageClassification : {}", averageClassification);
+            lesson.get().setAverageRating(averageClassification);
+            lessonRepository.save(lesson.get());
+        } else {
+            throw new LessonNotFoundException(feedback.getLessonId());
+        }
     }
 
     @Override

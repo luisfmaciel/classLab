@@ -6,6 +6,7 @@ import br.edu.infnet.feedbackservice.model.Lesson;
 import br.edu.infnet.feedbackservice.service.FeedbackResponse;
 import br.edu.infnet.feedbackservice.service.impl.FeedbackServiceImpl;
 import br.edu.infnet.feedbackservice.service.impl.LessonServiceImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -35,7 +36,7 @@ public class FeedbackController {
             @ApiResponse(responseCode = "400", description = "Classificação inválida ou aula não encontrada"),
             @ApiResponse(responseCode = "404", description = "Aula não encontrada")
     })
-    public ResponseEntity<?> saveFeedback(@RequestBody Feedback feedback, @RequestParam String classification) {
+    public ResponseEntity<?> saveFeedback(@RequestBody Feedback feedback, @RequestParam String classification) throws JsonProcessingException {
         log.info("Save Feedback: {}", feedback);
         log.info("Classificatin: {}", classification);
         Lesson lesson = lessonService.getLessonById(feedback.getLessonId());
@@ -46,7 +47,10 @@ public class FeedbackController {
             return ResponseEntity.badRequest().body(Map.of("error", "Invalid classification"));
         }
         feedback.setClassification(Classification.valueOf(classification));
+        int totalFeedback = feedbackService.getFeedbackCountByLessonId(feedback.getLessonId());
+        feedback.setTotalFeedbacks(totalFeedback+1);
         Feedback feedbackSaved = feedbackService.saveFeedback(feedback);
+        feedbackService.sendFeedback(feedbackSaved);
         return ResponseEntity.status(HttpStatus.CREATED).body(feedbackSaved);
     }
 

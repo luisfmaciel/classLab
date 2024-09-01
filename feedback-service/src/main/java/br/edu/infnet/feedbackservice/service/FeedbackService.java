@@ -7,4 +7,5 @@ import java.util.List;
 public interface FeedbackService {
     Feedback saveFeedback(Feedback feedback);
     Feedback[] getAllFeedbacksByLessonId(String lessonId);
+    int getFeedbackCountByLessonId(String lessonId);
 }

@@ -1,10 +1,7 @@
 package br.edu.infnet.feedbackservice.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -12,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 @Document(collection = "feedbacks")
 public class Feedback {
     @Id
@@ -19,6 +17,7 @@ public class Feedback {
     private String lessonId;
     private String comment;
     private Classification classification;
+    private int totalFeedbacks;
 
     public static boolean isValidClassification(String value) {
         try {

@@ -1,6 +1,5 @@
 package br.edu.infnet.feedbackservice.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,5 +19,6 @@ public class Lesson {
     private String description;
     private String videoId;
     private String lessonType;
+    private Date availableAt;
     private String teacherId;
 }

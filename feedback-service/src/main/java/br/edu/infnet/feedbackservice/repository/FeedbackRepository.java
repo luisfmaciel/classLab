@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface FeedbackRepository extends MongoRepository<Feedback, String> {
     Feedback[] findAllByLessonId(String lessonId);
+    int countByLessonId(String lessonId);
 }
