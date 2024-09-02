@@ -21,4 +21,6 @@ public class Lesson {
     private String lessonType;
     private Date availableAt;
     private String teacherId;
+    private int totalSumRating;
+    private Classification averageRating;
 }

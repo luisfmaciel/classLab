@@ -15,5 +15,4 @@ public class FeedbackProducer {
     public void send(Feedback feedback) throws JsonProcessingException {
         amqpTemplate.convertAndSend("feedback-exc", "feedback-rk", objectMapper.writeValueAsString(feedback));
     }
-
 }
