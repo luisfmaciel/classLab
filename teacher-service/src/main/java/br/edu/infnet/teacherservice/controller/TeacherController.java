@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/")
+@Slf4j
 public class TeacherController {
 
     private final TeacherServiceImpl teacherService;
@@ -44,6 +46,7 @@ public class TeacherController {
             @ApiResponse(responseCode = "404", description = "Professor não encontrado")
     })
     public ResponseEntity<Teacher> getTeacherById(@PathVariable String id) {
+        log.info("Get Teacher by ID: {}", id);
         return teacherService.getTeacherById(id)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new TeacherNotFoundException("Nenhum professor encontrado para o ID: " + id));
@@ -56,6 +59,7 @@ public class TeacherController {
             @ApiResponse(responseCode = "404", description = "Professores não encontrado")
     })
     public ResponseEntity<List<Teacher>> getTeachersByName(@PathVariable String name) {
+        log.info("Get Lesson by Name: {}", name);
         List<Teacher> teachers = teacherService.getTeachersByName(name);
         if(teachers.isEmpty()) {
             throw new TeacherNotFoundException("Nenhum professor encontrado com o nome " + name);
