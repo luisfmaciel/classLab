@@ -1,6 +1,6 @@
 services:
-  mongo:
-    container_name: MONGO-SERVER
+  mongo-server:
+    container_name: mongo-server
     image: mongo
     volumes:
       - ./mongodb-data:/data/db
@@ -11,47 +11,55 @@ services:
   mongo-express:
     image: mongo-express:1.0.2-20-alpine3.19
     links:
-      - mongo
+      - mongo-server
     ports:
       - "8099:9081"
     networks:
       - classlab_network
     depends_on:
-      - mongo
-  eureka:
+      - mongo-server
+  eureka-server:
     image: classlab_pb/eureka
-    container_name: EUREKA-SERVER
+    container_name: eureka-server
     ports:
       - "8761:8761"
     networks:
       - classlab_network
   lesson-service:
     image: classlab_pb/lesson
+    ports:
+      - "3000:3000"
     networks:
       - classlab_network
     depends_on:
-      - eureka
-      - mongo
+      - eureka-server
+      - mongo-server
   teacher-service:
     image: classlab_pb/teacher
+    ports:
+      - "4000:4000"
     networks:
       - classlab_network
     depends_on:
-      - eureka
-      - mongo
+      - eureka-server
+      - mongo-server
   feedback-service:
     image: classlab_pb/feedback
+    ports:
+      - "5000:5000"
     networks:
       - classlab_network
     depends_on:
-      - eureka
-      - mongo
+      - eureka-server
+      - mongo-server
   gateway:
     image: classlab_pb/gateway
+    ports:
+      - "9999:9999"
     networks:
       - classlab_network
     depends_on:
-      - eureka
+      - eureka-server
       - lesson-service
       - teacher-service
       - feedback-service
